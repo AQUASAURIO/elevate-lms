@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, BookOpen, Users, FileText, Megaphone, Bell, User, Shield, ClipboardList, ScrollText } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, BookOpen, Users, FileText, Megaphone, Bell, User, ClipboardList, ScrollText } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useTheme } from 'next-themes';
