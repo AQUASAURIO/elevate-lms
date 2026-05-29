@@ -268,3 +268,98 @@ Stage Summary:
 - Vercel: https://my-project-mu-kohl.vercel.app
 - Build passes with zero errors
 - All 26 routes compiled successfully
+
+---
+Task ID: supabase-adapter
+Agent: Supabase Adapter Agent
+Task: Create Supabase database adapter with Prisma-like interface for production PostgreSQL
+
+Work Log:
+- Analyzed all 24 API route files to catalog every Prisma operation pattern used
+- Cataloged 10 models: user, course, module, lesson, enrollment, assignment, submission, announcement, notification, auditLog
+- Identified all Prisma operations: findUnique, findFirst, findMany, create, createMany, update, updateMany, count, deleteMany, upsert, $transaction
+- Identified all where clause patterns: simple equality, contains, in, not, gte, lte, not-null, AND, OR, composite keys (userId_courseId, assignmentId_studentId), nested relation filters (single and double depth like `{ course: { instructorId } }` and `{ assignment: { course: { instructorId } } }`)
+- Identified include patterns: simple include, include with select, deep nested include (3+ levels), _count with select, include with orderBy/take
+- Identified update patterns: simple update, increment/decrement operators, updatedAt auto-set, null assignments
+- Created `/src/lib/supabase-client.ts` (~700 lines) — comprehensive Prisma-compatible adapter wrapping @supabase/supabase-js
+- Updated `/src/lib/db.ts` — conditional export: Supabase adapter when NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY are set, Prisma fallback otherwise
+- ESLint passes with 0 errors (2 pre-existing warnings)
+
+Stage Summary:
+- Supabase client: `createClient(url, serviceRoleKey)` with `db: { schema: 'public' }`
+- Where clause resolver: recursively translates Prisma where → flat Supabase filters; handles nested relation filters by pre-resolving IDs via sub-queries
+- Include processor: single-record and batch (findMany) modes; handles _count via grouped queries, many-to-one and one-to-many relations, nested includes, include with select, orderBy, take
+- Select processor: extracts scalar columns for Supabase `.select()`, relation keys treated as includes
+- Update transformer: handles `{ increment: N }` / `{ decrement: N }` by fetching current value first; auto-sets `updatedAt`
+- OrderBy handler: supports single and multi-field ordering
+- Composite key support: detects `userId_courseId` / `assignmentId_studentId` patterns
+- Transaction: sequential execution (Supabase REST doesn't support true transactions); supports both array and interactive forms
+- Date handling: ISO strings from Supabase converted to Date objects for Prisma compatibility
+- Zero code changes required in any API route — drop-in replacement via db.ts
+- Environment variables: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+
+---
+Task ID: supabase-seed
+Agent: Supabase Seed Agent
+Task: Seed data into Supabase PostgreSQL database using the SQL API
+
+Work Log:
+- Read Prisma schema (`prisma/schema.prisma`) and seed script (`prisma/seed.ts`) to understand data structure
+- Generated bcrypt hashes for 3 passwords using bcryptjs (cost 10): Admin123456, Prof123456, Stud123456
+- Created `/home/z/seed_supabase.js` — Node.js script that generates and executes INSERT SQL statements via Supabase SQL Management API
+- Pre-generated UUIDs for all 111 records across 10 tables to maintain referential integrity
+- Escaped all string values (single quotes in content, Spanish characters) for PostgreSQL compatibility
+- Executed data seeding in 12 sequential steps via POST to Supabase SQL API endpoint
+- All steps returned HTTP 201 success
+
+Data seeded:
+- 6 users (1 SUPER_ADMIN, 2 PROFESSOR, 3 STUDENT) with bcrypt password hashes
+- 4 courses (3 PUBLISHED, 1 DRAFT) with correct instructor foreign keys
+- 10 modules across 3 published courses (4+3+3)
+- 32 lessons across all modules (mix of TEXT, VIDEO, QUIZ types)
+- 5 assignments with due dates and module references
+- 6 enrollments (student1: 3 courses, student2: 2 courses, student3: 1 course)
+- 7 submissions (4 GRADED with scores/feedback, 3 SUBMITTED pending)
+- 8 announcements (4 pinned, distributed across 3 courses)
+- 15 notifications (students, professors, admin — mix of read/unread, INFO/SUCCESS/WARNING)
+- 18 audit log entries (USER_CREATE, COURSE_CREATE/PUBLISH, ENROLLMENT_CREATE, SUBMISSION_CREATE/GRADE, etc.)
+
+Verification:
+- Ran COUNT(*) queries on all 10 tables — all counts match expected values
+- Spot-checked users table: all 6 users with correct emails, names, and roles
+
+Stage Summary:
+- Total records seeded: 111 across 10 tables
+- All foreign key references are valid
+- All enum values match PostgreSQL enum types
+- Seed script is idempotent (TRUNCATE CASCADE before INSERT)
+- Test accounts: admin@elevate-lms.com/Admin123456, prof1@elevate-lms.com/Prof123456, prof2@elevate-lms.com/Prof123456, student1@elevate-lms.com/Stud123456, student2@elevate-lms.com/Stud123456, student3@elevate-lms.com/Stud123456
+
+---
+Task ID: 13
+Agent: Rebranding & Deployment Agent
+Task: Rebrand from SW-IPP to Elévate, set up Supabase PostgreSQL, rename all platforms
+
+Work Log:
+- Processed uploaded logo (Gemini_Generated_Image_vqxsegvqxsegvqxs.png): removed background using sharp color-distance threshold, cropped to content + padding
+- Created favicon files: favicon-32x32.png, favicon-16x16.png, apple-touch-icon.png, icon.png, logo.png
+- Renamed all SW-IPP references to Elévate across 12 source files (layout, sidebar, app-layout, login, register, page, auth-store, api, auth, register-route, seed, schema)
+- Changed localStorage keys from sw-ipp-token/refresh to elevate-token/refresh
+- Updated seed email domains from sw-ipp.com to elevate-lms.com
+- Renamed Supabase project from "moodle-2" to "elevate" via Management API
+- Created all 10 database tables in Supabase PostgreSQL via SQL API (DDL)
+- Added updatedAt triggers for all 9 timestamped tables
+- Installed @supabase/supabase-js and created comprehensive Prisma-compatible adapter (supabase-client.ts)
+- Seeded 111 records across 10 tables via Supabase SQL API
+- Updated Vercel project: renamed to "elevate", added NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, DIRECT_URL env vars
+- Renamed GitHub repo from "sw-ipp-lms" to "elevate-lms"
+- Pushed all changes to GitHub
+- ESLint: 0 errors (2 pre-existing warnings)
+
+Stage Summary:
+- Supabase: https://nqstswgiqfhhyvukzmkw.supabase.co (project name: elevate)
+- GitHub: https://github.com/AQUASAURIO/elevate-lms
+- Vercel: project renamed to "elevate" (auto-redeploy on push)
+- All platforms renamed from SW-IPP/moodle-2 to Elévate/elevate
+- Database: 10 tables, 111 records, all seeded
+- Auth system uses Supabase service_role key in production, Prisma+SQLite locally
