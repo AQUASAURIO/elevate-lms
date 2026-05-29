@@ -363,3 +363,29 @@ Stage Summary:
 - All platforms renamed from SW-IPP/moodle-2 to Elévate/elevate
 - Database: 10 tables, 111 records, all seeded
 - Auth system uses Supabase service_role key in production, Prisma+SQLite locally
+
+---
+Task ID: auth-fix
+Agent: Auth Fix Agent
+Task: Fix authentication bugs - Vercel "Something went wrong" and local "Session expired"
+
+Work Log:
+- Diagnosed root cause: `src/lib/auth.ts` used `Bun.password.hash()` and `Bun.password.verify()` which are Bun-only APIs. On Vercel (Node.js runtime), these throw `ReferenceError: Bun is not defined`, caught by the generic error handler returning "Something went wrong"
+- Diagnosed secondary issue: `src/lib/supabase-client.ts` had `'use server'` directive on line 1, causing Next.js to treat the module as a React Server Action, breaking the Prisma-compatible adapter
+- Installed `bcryptjs` + `@types/bcryptjs` as cross-runtime compatible bcrypt library (works on Bun, Node.js, and Vercel)
+- Replaced `Bun.password.hash(password, { algorithm: 'bcrypt', cost: 10 })` with `bcrypt.hash(password, BCRYPT_ROUNDS)` in auth.ts
+- Replaced `Bun.password.verify(password, hash)` with `bcrypt.compare(password, hash)` in auth.ts
+- Removed `'use server'` directive from supabase-client.ts (line 1)
+- Rewrote `src/lib/db.ts` to use conditional `require()` for Supabase adapter loading
+- Configured `.env` with Supabase credentials (NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET)
+- Verified Supabase project "elevate" (ref: nqstswgiqfhhyvukzmkw) has all 10 tables with correct schema
+- Verified existing users in Supabase have bcrypt `$2b$10$` hashes (compatible with bcryptjs)
+- Tested login API endpoint: admin@elevate-lms.com/Admin123456 returns `success: true` with access/refresh tokens
+- Verified Supabase adapter loads correctly: `[db] Using Supabase adapter` confirmed in server logs
+
+Stage Summary:
+- Root cause: `Bun.password` is Bun-only, not available on Vercel's Node.js runtime
+- Fix: `bcryptjs` as cross-runtime bcrypt replacement
+- Auth flows confirmed working: login returns proper JWT tokens with user data
+- Supabase adapter working: users table queried successfully
+- Pre-existing Turbopack stability issue in local dev (server crashes after first page request) — unrelated to auth changes

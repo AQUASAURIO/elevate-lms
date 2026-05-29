@@ -1,35 +1,46 @@
 import { PrismaClient } from '@prisma/client'
 
 // ---------------------------------------------------------------------------
-// Supabase adapter (loaded only when NEXT_PUBLIC_SUPABASE_URL is set)
+// Database abstraction layer
 // ---------------------------------------------------------------------------
-
-let supabaseDb: typeof import('@/lib/supabase-client').db | null = null
-
-if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const supabaseModule = require('@/lib/supabase-client')
-  supabaseDb = supabaseModule.db as typeof import('@/lib/supabase-client').db
-}
-
-// ---------------------------------------------------------------------------
-// Prisma fallback (used when Supabase is not configured)
+// When Supabase env vars are set, uses the Supabase adapter via require().
+// Otherwise, falls back to local Prisma + SQLite.
 // ---------------------------------------------------------------------------
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-const prismaDb =
+const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: ['query'],
+    log: ['error'],
   })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prismaDb
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
+// ---------------------------------------------------------------------------
+// Supabase adapter (loaded via require for server-side only)
+// ---------------------------------------------------------------------------
+
+let supabaseDb: any = null
+const USE_SUPABASE = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+)
+
+if (USE_SUPABASE) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require('@/lib/supabase-client')
+    supabaseDb = mod.db
+    console.log('[db] Using Supabase adapter')
+  } catch (error) {
+    console.error('[db] Failed to load Supabase adapter, falling back to Prisma:', error)
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Export: Supabase when available, Prisma otherwise
 // ---------------------------------------------------------------------------
 
-export const db = supabaseDb ?? prismaDb
+export const db = supabaseDb ?? (prisma as unknown as any)
