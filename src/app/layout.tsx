@@ -15,11 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SW-IPP | LMS Platform",
-  description: "SW-IPP Learning Management System - A modern platform for teaching and learning",
-  keywords: ["SW-IPP", "LMS", "Learning Management System", "Education"],
+  title: "Elévate | LMS Platform",
+  description: "Elévate Learning Management System - A modern platform for teaching and learning",
+  keywords: ["Elévate", "LMS", "Learning Management System", "Education"],
   icons: {
-    icon: "/logo.svg",
+    icon: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 

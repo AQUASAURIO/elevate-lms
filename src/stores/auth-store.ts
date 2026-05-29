@@ -17,8 +17,8 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
-  token: typeof window !== 'undefined' ? localStorage.getItem('sw-ipp-token') : null,
-  refreshToken: typeof window !== 'undefined' ? localStorage.getItem('sw-ipp-refresh-token') : null,
+  token: typeof window !== 'undefined' ? localStorage.getItem('elevate-token') : null,
+  refreshToken: typeof window !== 'undefined' ? localStorage.getItem('elevate-refresh-token') : null,
   isAuthenticated: false,
   isLoading: true,
 
@@ -32,11 +32,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (response.success && response.data) {
         const { accessToken, refreshToken, user } = response.data;
         if (data.rememberMe) {
-          localStorage.setItem('sw-ipp-token', accessToken);
-          localStorage.setItem('sw-ipp-refresh-token', refreshToken);
+          localStorage.setItem('elevate-token', accessToken);
+          localStorage.setItem('elevate-refresh-token', refreshToken);
         } else {
-          sessionStorage.setItem('sw-ipp-token', accessToken);
-          sessionStorage.setItem('sw-ipp-refresh-token', refreshToken);
+          sessionStorage.setItem('elevate-token', accessToken);
+          sessionStorage.setItem('elevate-refresh-token', refreshToken);
         }
         set({
           token: accessToken,
@@ -65,8 +65,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (response.success && response.data) {
         const { accessToken, refreshToken, user } = response.data;
-        localStorage.setItem('sw-ipp-token', accessToken);
-        localStorage.setItem('sw-ipp-refresh-token', refreshToken);
+        localStorage.setItem('elevate-token', accessToken);
+        localStorage.setItem('elevate-refresh-token', refreshToken);
         set({
           token: accessToken,
           refreshToken,
@@ -86,10 +86,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     // Best-effort logout
     apiPost('/api/auth/logout').catch(() => {});
-    localStorage.removeItem('sw-ipp-token');
-    localStorage.removeItem('sw-ipp-refresh-token');
-    sessionStorage.removeItem('sw-ipp-token');
-    sessionStorage.removeItem('sw-ipp-refresh-token');
+    localStorage.removeItem('elevate-token');
+    localStorage.removeItem('elevate-refresh-token');
+    sessionStorage.removeItem('elevate-token');
+    sessionStorage.removeItem('elevate-refresh-token');
     set({
       user: null,
       token: null,
@@ -100,7 +100,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   fetchUser: async () => {
-    const token = get().token || localStorage.getItem('sw-ipp-token') || sessionStorage.getItem('sw-ipp-token');
+    const token = get().token || localStorage.getItem('elevate-token') || sessionStorage.getItem('elevate-token');
     if (!token) {
       set({ isLoading: false, isAuthenticated: false });
       return;
@@ -121,16 +121,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     } catch (error) {
       // Try refresh token
-      const refreshToken = get().refreshToken || localStorage.getItem('sw-ipp-refresh-token') || sessionStorage.getItem('sw-ipp-refresh-token');
+      const refreshToken = get().refreshToken || localStorage.getItem('elevate-refresh-token') || sessionStorage.getItem('elevate-refresh-token');
       if (refreshToken) {
         try {
           const refreshResponse = await apiPost<{ accessToken: string; refreshToken: string }>('/api/auth/refresh', {
             refreshToken,
           });
           if (refreshResponse.success && refreshResponse.data) {
-            const storage = localStorage.getItem('sw-ipp-token') ? localStorage : sessionStorage;
-            storage.setItem('sw-ipp-token', refreshResponse.data.accessToken);
-            storage.setItem('sw-ipp-refresh-token', refreshResponse.data.refreshToken);
+            const storage = localStorage.getItem('elevate-token') ? localStorage : sessionStorage;
+            storage.setItem('elevate-token', refreshResponse.data.accessToken);
+            storage.setItem('elevate-refresh-token', refreshResponse.data.refreshToken);
 
             set({ token: refreshResponse.data.accessToken, refreshToken: refreshResponse.data.refreshToken });
 

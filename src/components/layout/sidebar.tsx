@@ -1,6 +1,6 @@
 'use client';
 
-import { GraduationCap, LayoutDashboard, BookOpen, Users, FileText, Megaphone, Bell, User, Shield, ClipboardList, ScrollText } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, FileText, Megaphone, Bell, User, Shield, ClipboardList, ScrollText } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useTheme } from 'next-themes';
@@ -35,6 +35,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
 
 const navItems = [
   { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
@@ -74,10 +75,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-          <span className="text-lg font-bold tracking-tight">SW-IPP</span>
+          <Image src="/logo.png" alt="Elévate" width={32} height={32} className="rounded-lg" />
+          <span className="text-lg font-bold tracking-tight">Elévate</span>
         </div>
       </SidebarHeader>
 

@@ -1,5 +1,5 @@
 /**
- * SW-IPP Authentication Utilities
+ * Elévate Authentication Utilities
  *
  * - JWT sign/verify using HMAC-SHA256 via Web Crypto API
  * - Password hashing using Bun.password (bcrypt-compatible)

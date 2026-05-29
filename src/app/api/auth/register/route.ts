@@ -71,8 +71,8 @@ export async function POST(request: NextRequest) {
     await db.notification.create({
       data: {
         userId: user.id,
-        title: 'Welcome to SW-IPP!',
-        message: `Hi ${firstName}, welcome to the SW-IPP Learning Management System. We're excited to have you on board!`,
+        title: 'Welcome to Elévate!',
+        message: `Hi ${firstName}, welcome to the Elévate Learning Management System. We're excited to have you on board!`,
         type: 'INFO',
       },
     });

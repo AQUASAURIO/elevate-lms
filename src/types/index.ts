@@ -1,4 +1,4 @@
-// SW-IPP LMS TypeScript Types
+// Elévate LMS TypeScript Types
 
 // Enums
 export type Role = 'SUPER_ADMIN' | 'ADMIN' | 'PROFESSOR' | 'STUDENT';

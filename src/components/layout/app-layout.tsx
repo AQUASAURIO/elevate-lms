@@ -79,7 +79,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     useAppStore.getState().navigate('dashboard');
                   }}
                 >
-                  SW-IPP
+                  Elévate
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -159,7 +159,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Footer */}
         <footer className="border-t px-4 py-3 md:px-6">
           <div className="flex flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
-            <p>&copy; {new Date().getFullYear()} SW-IPP LMS Platform. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Elévate LMS Platform. All rights reserved.</p>
             <div className="flex items-center gap-3">
               <span className="hover:text-foreground cursor-pointer transition-colors">Privacy</span>
               <span className="hover:text-foreground cursor-pointer transition-colors">Terms</span>

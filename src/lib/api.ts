@@ -2,20 +2,20 @@ import type { ApiResponse } from '@/types';
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('sw-ipp-token') || sessionStorage.getItem('sw-ipp-token');
+  return localStorage.getItem('elevate-token') || sessionStorage.getItem('elevate-token');
 }
 
 function getRefreshToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('sw-ipp-refresh-token') || sessionStorage.getItem('sw-ipp-refresh-token');
+  return localStorage.getItem('elevate-refresh-token') || sessionStorage.getItem('elevate-refresh-token');
 }
 
 function clearTokens(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem('sw-ipp-token');
-  localStorage.removeItem('sw-ipp-refresh-token');
-  sessionStorage.removeItem('sw-ipp-token');
-  sessionStorage.removeItem('sw-ipp-refresh-token');
+  localStorage.removeItem('elevate-token');
+  localStorage.removeItem('elevate-refresh-token');
+  sessionStorage.removeItem('elevate-token');
+  sessionStorage.removeItem('elevate-refresh-token');
 }
 
 function cleanToken(token: string): string {
@@ -36,10 +36,10 @@ async function refreshAccessToken(): Promise<string | null> {
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.data?.accessToken) {
-        const storage = localStorage.getItem('sw-ipp-token') ? localStorage : sessionStorage;
-        storage.setItem('sw-ipp-token', data.data.accessToken);
+        const storage = localStorage.getItem('elevate-token') ? localStorage : sessionStorage;
+        storage.setItem('elevate-token', data.data.accessToken);
         if (data.data.refreshToken) {
-          storage.setItem('sw-ipp-refresh-token', data.data.refreshToken);
+          storage.setItem('elevate-refresh-token', data.data.refreshToken);
         }
         return data.data.accessToken;
       }

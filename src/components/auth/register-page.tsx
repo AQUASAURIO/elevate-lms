@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { GraduationCap, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 const registerSchema = z
   .object({
@@ -65,7 +66,7 @@ export function RegisterPage() {
         email: data.email,
         password: data.password,
       });
-      toast.success('Account created! Welcome to SW-IPP.');
+      toast.success('Account created! Welcome to Elévate.');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed. Please try again.';
       toast.error(message);
@@ -82,11 +83,9 @@ export function RegisterPage() {
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/25">
-            <GraduationCap className="h-7 w-7" />
-          </div>
+          <Image src="/logo.png" alt="Elévate" width={48} height={48} className="rounded-xl" />
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">SW-IPP</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Elévate</h1>
             <p className="text-xs text-muted-foreground">Learning Management System</p>
           </div>
         </div>

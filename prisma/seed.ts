@@ -1,4 +1,4 @@
-// SW-IPP LMS — Seed Script
+// Elévate LMS — Seed Script
 // Populates the database with realistic test data.
 // Safe to run multiple times: clears existing data first, then upserts users.
 // Run with: bun run prisma/seed.ts
@@ -28,7 +28,7 @@ const DELIM = '─'.repeat(60)
 
 // ─── main ─────────────────────────────────────────────────────────────
 async function main() {
-  console.log('\n🌱 SW-IPP LMS Seed Script')
+  console.log('\n🌱 Elévate LMS Seed Script')
   console.log(DELIM)
 
   const counts: Record<string, number> = {}
@@ -52,12 +52,12 @@ async function main() {
   // ── 1. Users ──────────────────────────────────────────────────────
   console.log('👤 Creating users …')
   const usersData = [
-    { email: 'admin@sw-ipp.com', password: 'Admin123456', role: Role.SUPER_ADMIN, firstName: 'Admin', lastName: 'System' },
-    { email: 'prof1@sw-ipp.com', password: 'Prof123456', role: Role.PROFESSOR, firstName: 'María', lastName: 'García' },
-    { email: 'prof2@sw-ipp.com', password: 'Prof123456', role: Role.PROFESSOR, firstName: 'Carlos', lastName: 'Rodríguez' },
-    { email: 'student1@sw-ipp.com', password: 'Stud123456', role: Role.STUDENT, firstName: 'Ana', lastName: 'Martínez' },
-    { email: 'student2@sw-ipp.com', password: 'Stud123456', role: Role.STUDENT, firstName: 'Juan', lastName: 'López' },
-    { email: 'student3@sw-ipp.com', password: 'Stud123456', role: Role.STUDENT, firstName: 'Laura', lastName: 'Sánchez' },
+    { email: 'admin@elevate-lms.com', password: 'Admin123456', role: Role.SUPER_ADMIN, firstName: 'Admin', lastName: 'System' },
+    { email: 'prof1@elevate-lms.com', password: 'Prof123456', role: Role.PROFESSOR, firstName: 'María', lastName: 'García' },
+    { email: 'prof2@elevate-lms.com', password: 'Prof123456', role: Role.PROFESSOR, firstName: 'Carlos', lastName: 'Rodríguez' },
+    { email: 'student1@elevate-lms.com', password: 'Stud123456', role: Role.STUDENT, firstName: 'Ana', lastName: 'Martínez' },
+    { email: 'student2@elevate-lms.com', password: 'Stud123456', role: Role.STUDENT, firstName: 'Juan', lastName: 'López' },
+    { email: 'student3@elevate-lms.com', password: 'Stud123456', role: Role.STUDENT, firstName: 'Laura', lastName: 'Sánchez' },
   ] as const
 
   const users: Record<string, { id: string; email: string }> = {}
@@ -81,12 +81,12 @@ async function main() {
   }
   counts.users = usersData.length
 
-  const admin   = users['admin@sw-ipp.com']
-  const prof1   = users['prof1@sw-ipp.com']
-  const prof2   = users['prof2@sw-ipp.com']
-  const student1 = users['student1@sw-ipp.com']
-  const student2 = users['student2@sw-ipp.com']
-  const student3 = users['student3@sw-ipp.com']
+  const admin   = users['admin@elevate-lms.com']
+  const prof1   = users['prof1@elevate-lms.com']
+  const prof2   = users['prof2@elevate-lms.com']
+  const student1 = users['student1@elevate-lms.com']
+  const student2 = users['student2@elevate-lms.com']
+  const student3 = users['student3@elevate-lms.com']
 
   // ── 2. Courses ───────────────────────────────────────────────────
   console.log('\n📚 Creating courses …')
@@ -434,7 +434,7 @@ async function main() {
     { userId: prof2.id, title: 'Nueva Entrega Recibida', message: 'Ana Martínez ha enviado su trabajo para "Plan de Proyecto Sprint". Pendiente de calificación.', type: NotificationType.INFO, isRead: true, link: '/assignments', daysAgo: 10 },
     { userId: prof2.id, title: 'Inscripciones', message: 'Se han inscrito 3 nuevos estudiantes en "Gestión de Proyectos".', type: NotificationType.SUCCESS, isRead: true, link: '/courses', daysAgo: 25 },
     // Admin notification
-    { userId: admin.id, title: 'Sistema Inicializado', message: 'El sistema SW-IPP LMS ha sido inicializado correctamente con datos de prueba.', type: NotificationType.SUCCESS, isRead: true, link: '/dashboard', daysAgo: 30 },
+    { userId: admin.id, title: 'Sistema Inicializado', message: 'El sistema Elévate LMS ha sido inicializado correctamente con datos de prueba.', type: NotificationType.SUCCESS, isRead: true, link: '/dashboard', daysAgo: 30 },
     { userId: admin.id, title: 'Nuevo Registro', message: 'Un nuevo estudiante se ha registrado en la plataforma.', type: NotificationType.INFO, isRead: false, link: '/admin/users', daysAgo: 1 },
   ]
 
@@ -510,12 +510,12 @@ async function main() {
   console.log(`   Audit Logs    : ${counts.auditLogs}`)
   console.log(DELIM)
   console.log('\n🔑 Test Accounts:')
-  console.log('   Admin    : admin@sw-ipp.com / Admin123456')
-  console.log('   Prof 1   : prof1@sw-ipp.com / Prof123456')
-  console.log('   Prof 2   : prof2@sw-ipp.com / Prof123456')
-  console.log('   Student1 : student1@sw-ipp.com / Stud123456')
-  console.log('   Student2 : student2@sw-ipp.com / Stud123456')
-  console.log('   Student3 : student3@sw-ipp.com / Stud123456')
+  console.log('   Admin    : admin@elevate-lms.com / Admin123456')
+  console.log('   Prof 1   : prof1@elevate-lms.com / Prof123456')
+  console.log('   Prof 2   : prof2@elevate-lms.com / Prof123456')
+  console.log('   Student1 : student1@elevate-lms.com / Stud123456')
+  console.log('   Student2 : student2@elevate-lms.com / Stud123456')
+  console.log('   Student3 : student3@elevate-lms.com / Stud123456')
   console.log('')
 }
 

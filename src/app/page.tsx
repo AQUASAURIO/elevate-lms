@@ -48,7 +48,7 @@ export default function Home() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="h-10 w-10 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground">Loading SW-IPP...</p>
+          <p className="text-sm text-muted-foreground">Loading Elévate...</p>
         </div>
       </div>
     );

@@ -1,13 +1,14 @@
-// SW-IPP Learning Management System - Prisma Schema
-// SQLite provider (local development), PostgreSQL compatible
+// Elévate Learning Management System - Prisma Schema
+// PostgreSQL provider via Supabase
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ============================================================
