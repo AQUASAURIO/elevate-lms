@@ -1,0 +1,292 @@
+// SW-IPP Learning Management System - Prisma Schema
+// SQLite provider (local development), PostgreSQL compatible
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  PROFESSOR
+  STUDENT
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum LessonType {
+  TEXT
+  VIDEO
+  QUIZ
+  ASSIGNMENT
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+}
+
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  GRADED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  avatar        String?
+  role          Role      @default(STUDENT)
+  bio           String?
+  emailVerified Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  loginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  courses        Course[]
+  enrollments    Enrollment[]
+  submissions    Submission[]
+  announcements  Announcement[]
+  notifications  Notification[]
+  auditLogs      AuditLog[]
+
+  @@index([role])
+  @@index([isActive])
+  @@map("users")
+}
+
+model Course {
+  id           String      @id @default(cuid())
+  title        String
+  description  String?
+  thumbnail    String?
+  instructorId String
+  category     String?
+  level        CourseLevel @default(BEGINNER)
+  status       CourseStatus @default(DRAFT)
+  maxStudents  Int?
+  enrollCount  Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relations
+  instructor    User           @relation(fields: [instructorId], references: [id])
+  modules       Module[]
+  enrollments   Enrollment[]
+  assignments   Assignment[]
+  announcements Announcement[]
+
+  @@index([instructorId])
+  @@index([status])
+  @@index([category])
+  @@index([level])
+  @@map("courses")
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  courseId    String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  course      Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  assignments Assignment[]
+
+  @@index([courseId])
+  @@index([courseId, order])
+  @@map("modules")
+}
+
+model Lesson {
+  id             String     @id @default(cuid())
+  title          String
+  content        String
+  type           LessonType @default(TEXT)
+  videoUrl       String?
+  moduleId       String
+  order          Int        @default(0)
+  durationMinutes Int?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  // Relations
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@index([moduleId])
+  @@index([moduleId, order])
+  @@index([type])
+  @@map("lessons")
+}
+
+model Enrollment {
+  id           String           @id @default(cuid())
+  userId       String
+  courseId     String
+  status       EnrollmentStatus @default(ACTIVE)
+  progress     Float            @default(0)
+  completedAt  DateTime?
+  enrolledAt   DateTime         @default(now())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+  @@map("enrollments")
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  courseId    String
+  moduleId    String?
+  dueDate     DateTime?
+  maxScore    Int      @default(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  course      Course      @relation(fields: [courseId], references: [id])
+  module      Module?     @relation(fields: [moduleId], references: [id])
+  submissions Submission[]
+
+  @@index([courseId])
+  @@index([moduleId])
+  @@index([dueDate])
+  @@map("assignments")
+}
+
+model Submission {
+  id           String           @id @default(cuid())
+  content      String?
+  score        Float?
+  feedback     String?
+  assignmentId String
+  studentId    String
+  status       SubmissionStatus @default(PENDING)
+  submittedAt  DateTime?
+  gradedAt     DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    User       @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId])
+  @@index([assignmentId])
+  @@index([studentId])
+  @@index([status])
+  @@map("submissions")
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  courseId  String
+  authorId  String
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  course Course @relation(fields: [courseId], references: [id])
+  author User   @relation(fields: [authorId], references: [id])
+
+  @@index([courseId])
+  @@index([authorId])
+  @@index([courseId, isPinned])
+  @@index([createdAt])
+  @@map("announcements")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@index([action])
+  @@map("audit_logs")
+}
