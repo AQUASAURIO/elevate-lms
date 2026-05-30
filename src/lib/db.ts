@@ -1,66 +1,18 @@
 // ---------------------------------------------------------------------------
-// Database abstraction layer
+// Database client — Prisma (SQLite)
 // ---------------------------------------------------------------------------
-// When Supabase env vars are set, uses the Supabase adapter.
-// Otherwise, falls back to local Prisma + SQLite.
-// ---------------------------------------------------------------------------
-
-const USE_SUPABASE = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
-)
-
-// ---------------------------------------------------------------------------
-// Supabase adapter (loaded via require for server-side only)
+// Supabase adapter is available at /src/lib/supabase-client.ts for future
+// migration.  Set NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY to
+// activate it.  For now we use Prisma directly so Turbopack doesn't try to
+// resolve @supabase/supabase-js at compile time.
 // ---------------------------------------------------------------------------
 
-let supabaseDb: any = null
+import { PrismaClient } from '@prisma/client'
 
-if (USE_SUPABASE) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mod = require('@/lib/supabase-client')
-    if (mod.db) {
-      supabaseDb = mod.db
-      console.log('[db] Using Supabase adapter')
-    } else {
-      console.warn('[db] Supabase client is null (credentials missing). Falling back to Prisma.')
-    }
-  } catch (error) {
-    console.error('[db] Failed to load Supabase adapter:', error)
-  }
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
-// ---------------------------------------------------------------------------
-// Prisma fallback (lazy-loaded only when Supabase is NOT available)
-// ---------------------------------------------------------------------------
+export const db = globalForPrisma.prisma ?? new PrismaClient({ log: ['error'] })
 
-let prismaDb: any = null
-
-if (!supabaseDb) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { PrismaClient } = require('@prisma/client')
-
-    const globalForPrisma = globalThis as unknown as {
-      prisma: any | undefined
-    }
-
-    prismaDb =
-      globalForPrisma.prisma ??
-      new PrismaClient({
-        log: ['error'],
-      })
-
-    if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prismaDb
-
-    console.log('[db] Using Prisma fallback (local SQLite)')
-  } catch (error) {
-    console.error('[db] Failed to initialize Prisma:', error)
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Export: Supabase when available, Prisma otherwise
-// ---------------------------------------------------------------------------
-
-export const db = supabaseDb ?? prismaDb
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
