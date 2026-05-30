@@ -74,16 +74,21 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2.5 overflow-hidden">
-          <Image src="/logo.png" alt="Elévate" width={32} height={32} className="rounded-lg shrink-0" />
-          <span className="text-lg font-bold tracking-tight whitespace-nowrap group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200">Elévate</span>
+      <SidebarHeader className="px-4 py-5">
+        <div className="flex items-center gap-3 overflow-hidden justify-center">
+          <div className="relative shrink-0">
+            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full scale-150" />
+            <Image src="/logo.png" alt="Elévate" width={44} height={44} className="relative rounded-xl drop-shadow-md" priority />
+          </div>
+          <span className="text-xl font-bold tracking-tight whitespace-nowrap group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200">
+            <span className="bg-gradient-to-r from-[oklch(0.52_0.14_240)] to-[oklch(0.72_0.12_215)] bg-clip-text text-transparent">Elévate</span>
+          </span>
         </div>
       </SidebarHeader>
 
       <SidebarSeparator />
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-3">
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -99,7 +104,7 @@ export function AppSidebar() {
                     tooltip={item.label}
                     onClick={() => navigate(item.id)}
                   >
-                    <item.icon className="h-4 w-4" />
+                    <item.icon className="h-[18px] w-[18px]" />
                     <span>{item.label}</span>
                     {item.id === 'notifications' && unreadCount > 0 && (
                       <Badge variant="destructive" className="ml-auto h-5 min-w-5 text-[10px] px-1">
@@ -126,7 +131,7 @@ export function AppSidebar() {
                       tooltip={item.label}
                       onClick={() => navigate(item.id)}
                     >
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className="h-[18px] w-[18px]" />
                       <span>{item.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
