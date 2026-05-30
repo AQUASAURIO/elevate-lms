@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/editor';
 import { useAppStore } from '@/stores/app-store';
 import { toast } from 'sonner';
 import {
@@ -98,6 +98,7 @@ export function AssignmentsPage() {
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<string | null>(null);
   const [submissionContent, setSubmissionContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useAppStore((s) => s.navigate);
 
   const pending = mockAssignments.filter((a) => a.status === 'PENDING');
@@ -111,12 +112,19 @@ export function AssignmentsPage() {
   };
 
   const handleSubmit = () => {
-    if (!submissionContent.trim()) {
+    // Strip HTML tags to check if there's actual text content
+    const plainText = submissionContent.replace(/<[^>]*>/g, '').trim();
+    if (!plainText) {
       toast.error('Please enter your submission content');
       return;
     }
-    setSubmitDialogOpen(false);
-    toast.success('Assignment submitted successfully!');
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitDialogOpen(false);
+      toast.success('Assignment submitted successfully!');
+    }, 800);
   };
 
   const renderAssignment = (assignment: typeof mockAssignments[0]) => {
@@ -245,7 +253,7 @@ export function AssignmentsPage() {
 
       {/* Submit Dialog */}
       <Dialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto scrollbar-thin">
           <DialogHeader>
             <DialogTitle>Submit Assignment</DialogTitle>
             <DialogDescription>
@@ -255,24 +263,42 @@ export function AssignmentsPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Assignment description */}
+            {selectedAssignment && (
+              <div className="rounded-lg border bg-muted/40 p-4 space-y-2">
+                <p className="text-sm font-medium">Assignment Description</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {mockAssignments.find((a) => a.id === selectedAssignment)?.description}
+                </p>
+              </div>
+            )}
+            {/* Rich text editor */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Submission Content</label>
-              <Textarea
-                placeholder="Enter your submission content, paste your code, or describe your work..."
-                rows={8}
-                value={submissionContent}
-                onChange={(e) => setSubmissionContent(e.target.value)}
-                className="scrollbar-thin"
+              <label className="text-sm font-medium">Your Response</label>
+              <RichTextEditor
+                content={submissionContent}
+                onChange={setSubmissionContent}
+                placeholder="Write your response here... You can use the toolbar to format your text, add headings, lists, links, and more."
+                minHeight="250px"
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="pt-2">
             <Button variant="outline" onClick={() => setSubmitDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSubmit}>
-              <Send className="h-4 w-4 mr-2" />
-              Submit Assignment
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <span className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  Submit Assignment
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

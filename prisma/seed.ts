@@ -9,6 +9,8 @@ import bcrypt from 'bcryptjs'
 const db = new PrismaClient()
 
 // ─── helpers ──────────────────────────────────────────────────────────
+import bcrypt from 'bcryptjs'
+
 function hash(password: string): Promise<string> {
   return bcrypt.hash(password, 10)
 }

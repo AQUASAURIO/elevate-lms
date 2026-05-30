@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAppStore } from '@/stores/app-store';
 import { AppLayout } from '@/components/layout/app-layout';
@@ -42,13 +44,55 @@ export default function Home() {
     return authView;
   }, [isAuthenticated, initialized, authView]);
 
-  // Show loading spinner on first load
+  // Show polished loading screen on first load
   if (!initialized || isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground">Loading Elévate...</p>
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[oklch(0.15_0.04_250)] via-[oklch(0.20_0.06_250)] to-[oklch(0.25_0.08_240)] dark:from-[oklch(0.10_0.03_250)] dark:via-[oklch(0.14_0.05_250)] dark:to-[oklch(0.18_0.07_240)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-white to-cyan-50/80 dark:hidden" />
+
+        {/* Animated blobs */}
+        <div className="absolute top-1/3 -left-16 h-56 w-56 rounded-full bg-[oklch(0.52_0.14_240)]/15 dark:bg-[oklch(0.52_0.14_240)]/8 blur-3xl animate-blob" />
+        <div className="absolute bottom-1/3 -right-16 h-64 w-64 rounded-full bg-[oklch(0.72_0.12_215)]/15 dark:bg-[oklch(0.72_0.12_215)]/8 blur-3xl animate-blob [animation-delay:2000ms]" />
+
+        <div className="relative z-10 flex flex-col items-center gap-5">
+          {/* Pulsing logo */}
+          <motion.div
+            animate={{
+              scale: [1, 1.08, 1],
+              opacity: [0.8, 1, 0.8],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="drop-shadow-lg"
+          >
+            <Image
+              src="/logo.png"
+              alt="Elévate"
+              width={56}
+              height={56}
+              className="rounded-2xl"
+            />
+          </motion.div>
+
+          {/* Fade-in text */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="text-center"
+          >
+            <h2 className="text-xl font-bold tracking-tight text-white dark:text-white">
+              Elévate
+            </h2>
+            <p className="text-sm text-blue-200/60 dark:text-blue-200/40 mt-1">
+              Loading your experience...
+            </p>
+          </motion.div>
         </div>
       </div>
     );

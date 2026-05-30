@@ -416,3 +416,187 @@ Stage Summary:
 - Vercel project renamed to "elevate", connected to AQUASAURIO/elevate-lms on GitHub
 - Supabase project already named "elevate" with all tables and seed data (6 users, 4 courses, etc.)
 - Test accounts: admin@elevate-lms.com / Admin123456, student1@elevate-lms.com / Stud123456, etc.
+
+---
+Task ID: 2-a
+Agent: Design System Agent
+Task: Overhaul design system to Apple/Material You inspired aesthetic
+
+Work Log:
+- Rewrote `/src/app/globals.css` with complete Apple/Material You design system:
+  - Color palette: Primary oklch(0.52 0.14 240) deep blue, Accent oklch(0.72 0.12 215) bright cyan, Navy-based dark mode oklch(0.18 0.03 250)
+  - Light mode: Clean white backgrounds with subtle blue tints (hue 240)
+  - Dark mode: Deep navy (#0A2647) based backgrounds, not pure black
+  - All colors use oklch color space throughout
+  - Apple-inspired radius: `--radius: 0.875rem`, `--radius-xl: calc(var(--radius) + 6px)`, `--radius-sm: calc(var(--radius) - 4px)`
+  - Added `glass-card` utility: backdrop-blur 20px with translucent background, subtle border
+  - Added `surface-elevated` utility: layered Apple-style shadows with color tinting
+  - Added `hover-lift` utility: translateY(-2px) with enhanced shadow on hover
+  - Added `rounded-material` utility: 1.25rem border-radius for Material You containers
+  - Added `gradient-text` utility: blue→cyan gradient for headings
+  - Added `hover-scale` utility: scale 1.015/0.985 for interactive cards
+  - Added `scrollbar-smooth` utility: thin rounded scrollbar with blue-tinted thumb
+  - Added `gentle-pulse` keyframe animation for notifications
+  - Added `stagger-children` animation with stagger-in keyframe for list items
+  - Added font smoothing (-webkit-font-smoothing, -moz-osx-font-smoothing)
+  - Chart palette: blue-cyan gradient spectrum (5 colors)
+- Updated `/src/components/ui/card.tsx`:
+  - Added `glass-card`, `surface-elevated`, `hover-lift` classes to Card component
+  - Changed border from `border` to `border border-border/50` for subtlety
+  - Removed `shadow-sm` in favor of `surface-elevated` layered shadow
+- Updated `/src/components/ui/button.tsx`:
+  - Changed base border-radius from `rounded-md` to `rounded-xl`
+  - Added `hover-scale` to base classes for scale animation on hover/active
+  - Changed primary/destructive shadow from `shadow-xs` to `shadow-md`
+  - Changed outline/secondary shadow from `shadow-xs` to `shadow-sm`
+  - Increased default size: `h-9 px-4` → `h-10 px-5`
+  - Increased sm size: added `rounded-lg`
+  - Increased lg size: `h-10 rounded-md px-6` → `h-11 rounded-xl px-8`
+  - Changed icon size: `size-9` → `size-10 rounded-full`
+- Updated `/src/components/ui/badge.tsx`:
+  - Changed border-radius from `rounded-md` to `rounded-full`
+  - Increased padding from `px-2 py-0.5` to `px-3 py-1`
+  - Added `shadow-sm` to default, secondary, and destructive variants
+- Updated `/src/components/ui/input.tsx`:
+  - Changed border-radius from `rounded-md` to `rounded-xl`
+  - Increased height from `h-9` to `h-10`
+  - Increased padding from `px-3 py-1` to `px-4 py-2`
+  - Changed shadow from `shadow-xs` to `shadow-sm`
+  - Changed transition from `transition-[color,box-shadow]` to `transition-all duration-200`
+  - Changed focus ring from `focus-visible:border-ring focus-visible:ring-ring/50` to `focus-visible:border-primary focus-visible:ring-primary/20`
+- ESLint passes: 0 errors (3 pre-existing warnings)
+
+Stage Summary:
+- 5 files modified: globals.css, card.tsx, button.tsx, badge.tsx, input.tsx
+- Complete Apple/Material You design system with oklch color space
+- Elévate brand colors: deep blue primary, cyan accent, navy dark mode
+- 8 custom utility classes (glass-card, surface-elevated, hover-lift, rounded-material, gradient-text, hover-scale, scrollbar-smooth, scrollbar-thin)
+- 2 keyframe animations (gentle-pulse, stagger-in)
+- Enhanced shadcn/ui components: rounded corners, scale animations, layered shadows, smooth transitions
+- Zero ESLint errors
+
+---
+Task ID: 2-b
+Agent: Rich Text Editor Agent
+Task: Install TipTap and create a rich text document editor for assignment submissions
+
+Work Log:
+- Installed 20 TipTap packages: @tiptap/react, @tiptap/starter-kit, @tiptap/extension-text-align, @tiptap/extension-underline, @tiptap/extension-placeholder, @tiptap/extension-color, @tiptap/extension-text-style, @tiptap/extension-heading, @tiptap/pm, @tiptap/extension-highlight, @tiptap/extension-list-item, @tiptap/extension-bullet-list, @tiptap/extension-ordered-list, @tiptap/extension-link, @tiptap/extension-image, @tiptap/extension-table, @tiptap/extension-table-row, @tiptap/extension-table-cell, @tiptap/extension-table-header
+- Created `/src/components/editor/toolbar.tsx` — Full-featured toolbar component with:
+  - Text formatting group: Bold, Italic, Underline, Strikethrough, Highlight (with Lucide icons)
+  - Headings dropdown: Paragraph, H1, H2, H3 (DropdownMenu with active state highlighting)
+  - Text color picker: 8 preset colors (Default, Black, Dark Gray, Red, Orange, Green, Blue, Purple)
+  - Text alignment group: Left, Center, Right, Justify
+  - Lists group: Bullet list, Ordered list
+  - Link insertion (via prompt dialog)
+  - Clear formatting button
+  - Vertical Separator components between groups
+  - Tooltip on every button
+  - Active state highlighting on toggle buttons
+  - Responsive flex-wrap layout
+- Created `/src/components/editor/rich-text-editor.tsx` — Main editor component with:
+  - Props: content (HTML), onChange (callback), placeholder, editable, className, minHeight
+  - TipTap extensions: StarterKit, TextAlign, Underline, Placeholder, Highlight, Link, TextStyle, Color
+  - Toolbar: rounded-xl glass-card effect, sticky at top
+  - Editor area: white paper-like background, max-w-3xl mx-auto, generous padding (px-6 sm:px-8 py-6 sm:py-8), expandable min-height
+  - Focus ring on editor container (ring-2 ring-ring/20)
+  - Placeholder text: "Start writing your response..."
+  - Loading skeleton state while editor initializes
+  - Global CSS styles for prose-like content (h1-h3, p, ul, ol, li, a, mark, table, img)
+  - External content sync via useEffect
+  - immediatelyRender: false for SSR compatibility
+- Created `/src/components/editor/index.ts` — Barrel export for RichTextEditor and Toolbar
+- Updated `/src/components/assignments/assignments-page.tsx`:
+  - Replaced Textarea with RichTextEditor in submission dialog
+  - Dialog widened to max-w-3xl for editor accommodation
+  - Added assignment description card above the editor
+  - Added isSubmitting state with loading spinner animation
+  - Updated submit validation to strip HTML tags before checking empty content
+  - Added simulated submission delay (800ms)
+  - Removed unused Textarea import, added RichTextEditor import
+- ESLint: 0 errors (2 pre-existing warnings)
+
+Stage Summary:
+- 3 new files: editor/toolbar.tsx, editor/rich-text-editor.tsx, editor/index.ts
+- 1 modified file: assignments/assignments-page.tsx
+- Full-featured TipTap editor with Word/Google Docs-like inline editing experience
+- Professional toolbar with grouped buttons, tooltips, heading dropdown, and color picker
+- Paper-like editor area with clean typography, focus ring, and responsive design
+- Assignment submission dialog now uses rich text editor instead of plain textarea
+- Zero ESLint errors
+
+---
+Task ID: 2-c
+Agent: UI Polish Agent
+Task: Polish login page, dashboard, sidebar, and app-layout with Apple/Material You design
+
+Work Log:
+- Redesigned `/src/components/auth/login-page.tsx`:
+  - Replaced emerald gradient with deep navy-to-blue gradient background (oklch colors)
+  - Added 3 animated gradient blobs (blur-3xl with blob keyframes, staggered delays)
+  - Card changed from `border-0 shadow-xl` to `glass-card surface-elevated rounded-2xl` with backdrop-blur
+  - Logo hover effect: `drop-shadow` glow via framer-motion spring animation
+  - Form inputs: `rounded-xl h-11 bg-background/50` with smooth focus ring transitions
+  - Submit button: full-width gradient background (primary→accent), `hover-lift`, "Sign in to Elévate" text
+  - Loading state: rotating pulsing logo image instead of generic spinner
+  - Register link: subtle text button with hover underline
+  - Motion entrance animation with scale spring physics
+
+- Redesigned `/src/components/auth/register-page.tsx`:
+  - Same gradient background + animated blobs as login
+  - Matching glass-card style with rounded-2xl
+  - Same form input styling (rounded-xl, smooth focus transitions)
+  - Gradient submit button: "Create Account"
+  - Same loading state with rotating logo
+  - Back to login link positioned outside card
+  - Motion-animated error messages (fade + slide)
+
+- Polished `/src/components/layout/app-layout.tsx`:
+  - Header: glass-card effect (`bg-background/80 backdrop-blur-xl`), height h-16, more padding
+  - Search bar: `rounded-full bg-muted/40` with glass styling
+  - Notification badge: `animate-pulse` when count > 0
+  - User avatar: `ring-1 ring-border/50`, hover ring `hover:ring-2 hover:ring-primary/20`
+  - Page transition: framer-motion spring physics (`type: 'spring', stiffness: 300, damping: 30, mass: 0.8`)
+  - Footer: cleaner with `border-border/30 bg-background/50 backdrop-blur-sm`
+  - Dropdown menu: `rounded-xl` with backdrop blur
+
+- Polished `/src/components/layout/sidebar.tsx`:
+  - Logo area: gradient line below logo (`bg-gradient-to-r from-transparent via-primary/40 to-transparent`)
+  - Nav items: larger touch targets (h-10), `rounded-xl` when active
+  - Active state: `bg-primary/10 text-primary font-medium` instead of just text color
+  - Icons: larger `h-[18px] w-[18px]`
+  - Footer user section: glass-card style (`bg-muted/30 backdrop-blur-sm rounded-xl`)
+  - Separator: gradient line instead of solid
+  - Smooth 200ms transition on hover for all nav items
+  - Notification badge: `rounded-full animate-pulse`
+
+- Enhanced `/src/components/dashboard/dashboard-page.tsx`:
+  - Welcome heading: `gradient-text` class (blue→cyan gradient)
+  - Stat cards: `hover-lift` + `surface-elevated`, circular gradient icon containers, `group-hover:scale-110` on icons
+  - Stat grid: `stagger-children` class for entrance animation
+  - Chart cards: `rounded-xl overflow-hidden` on chart area, softer grid lines (`stroke-muted/40`), larger rounded bar corners (`radius={[6, 6, 0, 0]}`)
+  - Activity feed items: left border color indicator by type (enrollment=blue, submission=cyan, grade=green, announcement=amber), `hover-lift`
+  - Deadline items: `rounded-full px-3` badges, `rounded-xl border-border/40` containers
+  - Course progress bars: gradient fill (`bg-gradient-to-r from-primary to-accent`), `rounded-full` track
+  - Overall spacing: `space-y-8` between sections, more generous padding
+  - Create Course / Audit Logs buttons: gradient background with hover-lift
+
+- Updated loading screen in `/src/app/page.tsx`:
+  - Pulsing Elévate logo (motion animate scale + opacity)
+  - "Elévate" text below with fade-in animation
+  - Subtle gradient background matching auth pages
+  - Animated blobs for visual depth
+  - "Loading your experience..." text
+
+- Added `animate-blob` keyframe animation and `.animate-blob` class to `/src/app/globals.css`
+- ESLint: 0 errors (2 pre-existing warnings from react-hook-form watch)
+
+Stage Summary:
+- 6 files modified: login-page.tsx, register-page.tsx, app-layout.tsx, sidebar.tsx, dashboard-page.tsx, page.tsx
+- 1 file updated: globals.css (blob animation keyframe)
+- Auth pages: Apple-style floating glass cards on gradient backgrounds with animated blobs
+- App layout: glass header, spring physics page transitions, glass footer
+- Sidebar: gradient separators, larger touch targets, glass user footer, enhanced active state
+- Dashboard: gradient headings, hover-lift cards, gradient progress bars, stagger animations, color-coded activity borders
+- Loading screen: pulsing logo with gradient background
+- Zero ESLint errors
