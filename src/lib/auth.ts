@@ -2,7 +2,7 @@
  * Elévate Authentication Utilities
  *
  * - JWT sign/verify using HMAC-SHA256 via Web Crypto API
- * - Password hashing using bcryptjs (Node.js compatible)
+ * - Password hashing using bcryptjs (cross-runtime: Bun + Node.js + Vercel)
  * - Request helpers to extract user from Authorization header
  */
 
@@ -51,10 +51,13 @@ function base64url(data: Uint8Array): string {
 
 async function importKey(): Promise<CryptoKey> {
   const encoder = new TextEncoder();
-  return crypto.subtle.importKey('raw', encoder.encode(JWT_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, [
-    'sign',
-    'verify',
-  ]);
+  return crypto.subtle.importKey(
+    'raw',
+    encoder.encode(JWT_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign', 'verify'],
+  );
 }
 
 function splitToken(token: string): [string, string, string] {
@@ -131,10 +134,8 @@ export async function verifyToken(token: string): Promise<JwtPayload> {
 }
 
 // ---------------------------------------------------------------------------
-// Password helpers (bcryptjs — cross-runtime: Bun + Node.js + Vercel)
+// Password helpers (bcryptjs — cross-runtime)
 // ---------------------------------------------------------------------------
-
-import bcrypt from 'bcryptjs';
 
 const BCRYPT_ROUNDS = 10;
 
@@ -222,4 +223,3 @@ export async function getAuthUser(request: Request): Promise<{ user: AuthUser; p
 // ---------------------------------------------------------------------------
 
 export const ADMIN_ROLES = ['SUPER_ADMIN', 'ADMIN'] as const;
-
