@@ -2,9 +2,11 @@
  * Elévate Authentication Utilities
  *
  * - JWT sign/verify using HMAC-SHA256 via Web Crypto API
- * - Password hashing using Bun.password (bcrypt-compatible)
+ * - Password hashing using bcryptjs (Node.js compatible)
  * - Request helpers to extract user from Authorization header
  */
+
+import bcrypt from 'bcryptjs';
 
 // ---------------------------------------------------------------------------
 // Config

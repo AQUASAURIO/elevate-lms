@@ -337,3 +337,32 @@ Stage Summary:
 - Dark mode properly uses brighter primary for visibility
 - Sidebar "Appearance" opens directly to appearance settings tab
 - Dev server compiles and returns HTTP 200 successfully
+
+---
+Task ID: 15
+Agent: Auth Fix Agent
+Task: Fix "session expired" login bug - Bun.password not available in Next.js API routes
+
+Work Log:
+- Tested login API with curl: received `INTERNAL_ERROR` (500)
+- Checked dev logs: found `ReferenceError: Bun is not defined` at `src/lib/auth.ts:140`
+- Root cause: `Bun.password.verify()` is only available in Bun runtime, but Next.js API routes run in Node.js
+- Installed `bcryptjs` + `@types/bcryptjs` as Node.js-compatible alternative
+- Updated `src/lib/auth.ts`: replaced `Bun.password.hash()` and `Bun.password.verify()` with `bcrypt.hash()` and `bcrypt.compare()`
+- Updated `prisma/seed.ts`: replaced `Bun.password.hash()` with `bcrypt.hash()` for consistent hashing
+- Re-seeded database with bcryptjs-hashed passwords
+- Verified all 3 account types login successfully via curl (admin, professor, student)
+- Verified `/api/auth/me` returns correct user data after login
+- ESLint: 0 errors (2 warnings, pre-existing)
+
+Stage Summary:
+- Critical bug fixed: `Bun is not defined` in Next.js API routes
+- `src/lib/auth.ts`: now uses `bcryptjs` (Node.js compatible) instead of `Bun.password`
+- `prisma/seed.ts`: now uses `bcryptjs` for consistent password hashing
+- All test accounts verified working:
+  - admin@sw-ipp.com / Admin123456 (SUPER_ADMIN) ✓
+  - prof1@sw-ipp.com / Prof123456 (PROFESSOR) ✓
+  - prof2@sw-ipp.com / Prof123456 (PROFESSOR) ✓
+  - student1@sw-ipp.com / Stud123456 (STUDENT) ✓
+  - student2@sw-ipp.com / Stud123456 (STUDENT) ✓
+  - student3@sw-ipp.com / Stud123456 (STUDENT) ✓

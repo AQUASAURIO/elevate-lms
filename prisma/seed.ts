@@ -4,12 +4,13 @@
 // Run with: bun run prisma/seed.ts
 
 import { PrismaClient, Role, CourseLevel, CourseStatus, LessonType, EnrollmentStatus, SubmissionStatus, NotificationType } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const db = new PrismaClient()
 
 // ─── helpers ──────────────────────────────────────────────────────────
 function hash(password: string): Promise<string> {
-  return Bun.password.hash(password)
+  return bcrypt.hash(password, 10)
 }
 
 function ts(daysAgo = 0): Date {
