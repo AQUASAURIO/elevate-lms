@@ -366,3 +366,27 @@ Stage Summary:
   - student1@sw-ipp.com / Stud123456 (STUDENT) ✓
   - student2@sw-ipp.com / Stud123456 (STUDENT) ✓
   - student3@sw-ipp.com / Stud123456 (STUDENT) ✓
+
+---
+Task ID: 16
+Agent: Bug Fix Agent
+Task: Fix hexToOklch m_ variable bug, sidebar collapse behavior, push to GitHub
+
+Work Log:
+- Fixed `ReferenceError: m is not defined` in theme-store.ts line 228 — variables `m` and `m` (in bVal) were missing underscore suffix; changed to `m_` to match declaration
+- Fixed sidebar collapse behavior: when collapsed to icon mode, logo text "Elévate", user name/role text, and chevron arrow now properly hide with smooth opacity+width transitions
+- Added `overflow-hidden` to header and footer user info containers
+- Added `shrink-0` to logo image and avatar to prevent squishing
+- Added `tooltip` prop to user footer button so hovering shows user name when collapsed
+- Added `whitespace-nowrap` to text spans to prevent wrapping during transition
+- Fixed Appearance dropdown menu to navigate to `profile` with `tab: 'appearance'` parameter
+- Changed My Courses icon from `Shield` to `GraduationCap` for better semantic meaning
+- Resolved rebase conflicts with remote (auth.ts import location, sidebar imports)
+- Pushed all changes to GitHub (now at elevate-lms repo)
+
+Stage Summary:
+- theme-store.ts: fixed `m` → `m_` reference error in hexToOklch
+- sidebar.tsx: proper collapse behavior with animated text hiding, tooltip support, GraduationCap icon
+- auth.ts: bcryptjs migration cleanly rebased
+- GitHub: pushed to https://github.com/AQUASAURIO/elevate-lms.git
+- ESLint: 0 errors
