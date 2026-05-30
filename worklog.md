@@ -299,3 +299,41 @@ Stage Summary:
 - Theme persistence via localStorage
 - Profile page now has Account + Appearance tabs
 - Dev server compiles and returns HTTP 200 successfully
+
+---
+Task ID: 14
+Agent: Design Refinement Agent
+Task: Refine logo-derived colors, enhance theme customization system, add global theme initializer
+
+Work Log:
+- Analyzed logo.png with VLM skill — confirmed logo is intact and properly designed
+- Extracted precise brand colors from VLM analysis:
+  - Primary: #0077B6 (deep blue) → oklch(0.52 0.14 240)
+  - Accent: #00B4D8 (bright cyan-blue) → oklch(0.72 0.12 215)
+  - Text: #0A2647 (dark navy) → oklch(0.25 0.06 250)
+- Updated globals.css — all CSS variables now use exact logo-derived oklch colors
+- Dark mode now uses brighter #00B4D8 for primary to ensure visibility
+- Updated theme-store.ts:
+  - Brand preset matches exact logo colors with dark mode variant
+  - Added hex-to-oklch converter for custom primary colors
+  - Added `resetTheme()` method to clear custom CSS vars
+  - All presets now include dark mode color variants
+- Enhanced appearance-settings.tsx:
+  - Added custom primary color picker with hex input and color preview swatch
+  - Added custom background color picker with hex input and color preview swatch
+  - Improved descriptions and hover states for all options
+  - Added "Reset to Defaults" button within the component
+- Created theme-initializer.tsx — global component that applies saved theme on app mount and watches for dark/light class changes
+- Updated layout.tsx — includes ThemeInitializer inside ThemeProvider
+- Updated app-store.ts — added profileTab parameter for navigation
+- Updated sidebar.tsx — "Appearance" menu item navigates to profile with appearance tab
+- Updated dashboard-page.tsx — chart colors to oklch(0.52 0.14 240) matching new primary
+- ESLint passes with 0 errors (2 pre-existing react-hook-form warnings)
+
+Stage Summary:
+- All colors now precisely match the Elévate logo palette (#0077B6, #00B4D8, #0A2647)
+- Theme applies globally on app load (ThemeInitializer in layout)
+- Custom color pickers support hex input with live preview
+- Dark mode properly uses brighter primary for visibility
+- Sidebar "Appearance" opens directly to appearance settings tab
+- Dev server compiles and returns HTTP 200 successfully

@@ -17,6 +17,7 @@ interface AppState {
   currentPage: PageName;
   courseDetailId: string | null;
   courseEditorId: string | null;
+  profileTab: string | null;
   sidebarOpen: boolean;
   navigate: (page: PageName, params?: Record<string, string>) => void;
   setSidebarOpen: (open: boolean) => void;
@@ -26,6 +27,7 @@ export const useAppStore = create<AppState>((set) => ({
   currentPage: 'dashboard',
   courseDetailId: null,
   courseEditorId: null,
+  profileTab: null,
   sidebarOpen: true,
 
   navigate: (page, params = {}) => {
@@ -33,6 +35,7 @@ export const useAppStore = create<AppState>((set) => ({
       currentPage: page,
       courseDetailId: params.courseId ?? null,
       courseEditorId: params.courseId ?? null,
+      profileTab: params.tab ?? null,
     });
   },
 

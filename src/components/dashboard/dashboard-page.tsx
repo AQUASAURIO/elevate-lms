@@ -149,8 +149,8 @@ function StudentDashboard() {
                 <AreaChart data={completionData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="oklch(0.49 0.15 250)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="oklch(0.49 0.15 250)" stopOpacity={0} />
+                      <stop offset="5%" stopColor="oklch(0.52 0.14 240)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="oklch(0.52 0.14 240)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -167,7 +167,7 @@ function StudentDashboard() {
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="oklch(0.49 0.15 250)"
+                    stroke="oklch(0.52 0.14 240)"
                     strokeWidth={2}
                     fill="url(#colorValue)"
                   />
@@ -329,7 +329,7 @@ function ProfessorDashboard() {
                       fontSize: '13px',
                     }}
                   />
-                  <Bar dataKey="value" fill="oklch(0.49 0.15 250)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="value" fill="oklch(0.52 0.14 240)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -460,7 +460,7 @@ function AdminDashboard() {
                       fontSize: '13px',
                     }}
                   />
-                  <Bar dataKey="students" fill="oklch(0.49 0.15 250)" radius={[4, 4, 0, 0]} name="Students" />
+                  <Bar dataKey="students" fill="oklch(0.52 0.14 240)" radius={[4, 4, 0, 0]} name="Students" />
                   <Bar dataKey="professors" fill="oklch(0.60 0.10 230)" radius={[4, 4, 0, 0]} name="Professors" />
                 </BarChart>
               </ResponsiveContainer>

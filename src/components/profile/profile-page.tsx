@@ -14,13 +14,20 @@ import { toast } from 'sonner';
 import { Loader2, User, Mail, Shield, Calendar, Clock, Save, Palette, RotateCcw } from 'lucide-react';
 import { format } from 'date-fns';
 import { AppearanceSettings } from './appearance-settings';
-import { useThemeStore, COLOR_PRESETS } from '@/stores/theme-store';
+import { useThemeStore } from '@/stores/theme-store';
+import { useAppStore } from '@/stores/app-store';
 
 export function ProfilePage() {
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
   const [isSaving, setIsSaving] = useState(false);
   const [bio, setBio] = useState(user?.bio || '');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return useAppStore.getState().profileTab === 'appearance' ? 'appearance' : 'account';
+    }
+    return 'account';
+  });
 
   const userInitials = user
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
@@ -28,7 +35,6 @@ export function ProfilePage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
     updateUser({ bio });
     setIsSaving(false);
@@ -36,8 +42,7 @@ export function ProfilePage() {
   };
 
   const handleResetTheme = () => {
-    useThemeStore.getState().setColorPreset('brand');
-    useThemeStore.getState().setBackgroundStyle('default');
+    useThemeStore.getState().resetTheme();
     toast.success('Theme reset to defaults');
   };
 
@@ -89,7 +94,7 @@ export function ProfilePage() {
       </Card>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="account" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="account" className="gap-1.5">
             <User className="h-3.5 w-3.5" />
@@ -103,7 +108,6 @@ export function ProfilePage() {
 
         {/* Account Tab */}
         <TabsContent value="account" className="space-y-6">
-          {/* Account Info */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Account Information</CardTitle>
@@ -165,7 +169,6 @@ export function ProfilePage() {
             </CardContent>
           </Card>
 
-          {/* Bio */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Bio</CardTitle>

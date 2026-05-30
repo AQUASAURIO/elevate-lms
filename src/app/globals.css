@@ -45,90 +45,93 @@
 
 /* ============================================================
    ELÉVATE — Brand Color Palette
-   Based on the Elévate logo: navy (#003366), blue (#0099CC), teal (#00C2D1)
+   Based on the Elévate logo:
+     Primary: #0077B6 (deep blue) → oklch(0.52 0.14 240)
+     Accent:  #00B4D8 (bright cyan-blue) → oklch(0.72 0.12 215)
+     Text:    #0A2647 (dark navy) → oklch(0.25 0.06 250)
    ============================================================ */
 
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.28 0.10 255);
+  --foreground: oklch(0.25 0.06 250);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.28 0.10 255);
+  --card-foreground: oklch(0.25 0.06 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.28 0.10 255);
-  /* Primary: rich blue from logo */
-  --primary: oklch(0.49 0.15 250);
+  --popover-foreground: oklch(0.25 0.06 250);
+  /* Primary: #0077B6 deep blue from logo */
+  --primary: oklch(0.52 0.14 240);
   --primary-foreground: oklch(0.985 0 0);
-  /* Secondary: soft blue tint */
-  --secondary: oklch(0.95 0.02 240);
-  --secondary-foreground: oklch(0.28 0.10 255);
-  /* Muted: neutral gray */
-  --muted: oklch(0.965 0.005 250);
-  --muted-foreground: oklch(0.55 0.02 255);
-  /* Accent: teal from logo */
-  --accent: oklch(0.95 0.03 240);
-  --accent-foreground: oklch(0.28 0.10 255);
+  /* Secondary: soft tint from logo palette */
+  --secondary: oklch(0.95 0.02 235);
+  --secondary-foreground: oklch(0.25 0.06 250);
+  /* Muted: neutral gray with subtle blue tint */
+  --muted: oklch(0.965 0.005 240);
+  --muted-foreground: oklch(0.50 0.02 250);
+  /* Accent: #00B4D8 bright cyan-blue from logo */
+  --accent: oklch(0.95 0.04 215);
+  --accent-foreground: oklch(0.25 0.06 250);
   /* Destructive: red (unchanged) */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.01 250);
-  --input: oklch(0.92 0.01 250);
-  --ring: oklch(0.49 0.15 250);
-  /* Chart colors: logo palette */
-  --chart-1: oklch(0.49 0.15 250);
-  --chart-2: oklch(0.60 0.10 230);
-  --chart-3: oklch(0.72 0.08 195);
+  --border: oklch(0.92 0.01 240);
+  --input: oklch(0.92 0.01 240);
+  --ring: oklch(0.52 0.14 240);
+  /* Chart colors: logo palette gradient */
+  --chart-1: oklch(0.52 0.14 240);
+  --chart-2: oklch(0.72 0.12 215);
+  --chart-3: oklch(0.60 0.10 230);
   --chart-4: oklch(0.80 0.15 80);
   --chart-5: oklch(0.65 0.20 300);
   /* Sidebar */
-  --sidebar: oklch(0.98 0.008 250);
-  --sidebar-foreground: oklch(0.28 0.10 255);
-  --sidebar-primary: oklch(0.49 0.15 250);
+  --sidebar: oklch(0.98 0.008 240);
+  --sidebar-foreground: oklch(0.25 0.06 250);
+  --sidebar-primary: oklch(0.52 0.14 240);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.95 0.03 240);
-  --sidebar-accent-foreground: oklch(0.28 0.10 255);
-  --sidebar-border: oklch(0.92 0.01 250);
-  --sidebar-ring: oklch(0.49 0.15 250);
+  --sidebar-accent: oklch(0.95 0.04 215);
+  --sidebar-accent-foreground: oklch(0.25 0.06 250);
+  --sidebar-border: oklch(0.92 0.01 240);
+  --sidebar-ring: oklch(0.52 0.14 240);
 }
 
 .dark {
-  --background: oklch(0.17 0.02 255);
-  --foreground: oklch(0.96 0.005 250);
-  --card: oklch(0.22 0.02 255);
-  --card-foreground: oklch(0.96 0.005 250);
-  --popover: oklch(0.22 0.02 255);
-  --popover-foreground: oklch(0.96 0.005 250);
-  /* Primary: lighter blue for dark mode */
-  --primary: oklch(0.60 0.14 250);
-  --primary-foreground: oklch(0.15 0.02 255);
+  --background: oklch(0.17 0.02 250);
+  --foreground: oklch(0.96 0.008 240);
+  --card: oklch(0.22 0.02 250);
+  --card-foreground: oklch(0.96 0.008 240);
+  --popover: oklch(0.22 0.02 250);
+  --popover-foreground: oklch(0.96 0.008 240);
+  /* Primary: #00B4D8 bright cyan-blue for dark mode visibility */
+  --primary: oklch(0.72 0.12 215);
+  --primary-foreground: oklch(0.15 0.02 250);
   /* Secondary */
-  --secondary: oklch(0.27 0.03 255);
-  --secondary-foreground: oklch(0.96 0.005 250);
+  --secondary: oklch(0.27 0.03 240);
+  --secondary-foreground: oklch(0.96 0.008 240);
   /* Muted */
-  --muted: oklch(0.27 0.02 255);
-  --muted-foreground: oklch(0.70 0.02 250);
+  --muted: oklch(0.27 0.02 250);
+  --muted-foreground: oklch(0.70 0.02 240);
   /* Accent */
-  --accent: oklch(0.27 0.03 255);
-  --accent-foreground: oklch(0.96 0.005 250);
+  --accent: oklch(0.27 0.03 240);
+  --accent-foreground: oklch(0.96 0.008 240);
   /* Destructive */
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.35 0.03 255);
-  --input: oklch(0.30 0.03 255);
-  --ring: oklch(0.60 0.14 250);
-  /* Chart colors */
-  --chart-1: oklch(0.60 0.14 250);
-  --chart-2: oklch(0.65 0.10 230);
-  --chart-3: oklch(0.72 0.08 195);
+  --border: oklch(0.35 0.03 250);
+  --input: oklch(0.30 0.03 250);
+  --ring: oklch(0.72 0.12 215);
+  /* Chart colors: logo palette for dark mode */
+  --chart-1: oklch(0.72 0.12 215);
+  --chart-2: oklch(0.65 0.14 240);
+  --chart-3: oklch(0.60 0.10 230);
   --chart-4: oklch(0.70 0.20 300);
   --chart-5: oklch(0.80 0.15 80);
   /* Sidebar */
-  --sidebar: oklch(0.20 0.02 255);
-  --sidebar-foreground: oklch(0.96 0.005 250);
-  --sidebar-primary: oklch(0.60 0.14 250);
-  --sidebar-primary-foreground: oklch(0.15 0.02 255);
-  --sidebar-accent: oklch(0.27 0.03 255);
-  --sidebar-accent-foreground: oklch(0.96 0.005 250);
-  --sidebar-border: oklch(0.35 0.03 255);
-  --sidebar-ring: oklch(0.60 0.14 250);
+  --sidebar: oklch(0.20 0.02 250);
+  --sidebar-foreground: oklch(0.96 0.008 240);
+  --sidebar-primary: oklch(0.72 0.12 215);
+  --sidebar-primary-foreground: oklch(0.15 0.02 250);
+  --sidebar-accent: oklch(0.27 0.03 240);
+  --sidebar-accent-foreground: oklch(0.96 0.008 240);
+  --sidebar-border: oklch(0.35 0.03 250);
+  --sidebar-ring: oklch(0.72 0.12 215);
 }
 
 @layer base {
@@ -174,12 +177,12 @@
 
   /* Gradient backgrounds based on logo palette */
   .bg-brand-gradient {
-    background: linear-gradient(135deg, oklch(0.49 0.15 250), oklch(0.72 0.08 195));
+    background: linear-gradient(135deg, oklch(0.52 0.14 240), oklch(0.72 0.12 215));
   }
   .bg-brand-gradient-light {
-    background: linear-gradient(135deg, oklch(0.96 0.03 240), oklch(0.98 0.02 250));
+    background: linear-gradient(135deg, oklch(0.97 0.02 235), oklch(0.98 0.03 215));
   }
   .bg-brand-gradient-dark {
-    background: linear-gradient(135deg, oklch(0.22 0.03 255), oklch(0.17 0.02 255));
+    background: linear-gradient(135deg, oklch(0.22 0.03 250), oklch(0.17 0.02 250));
   }
 }
