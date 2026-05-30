@@ -19,8 +19,12 @@ if (USE_SUPABASE) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require('@/lib/supabase-client')
-    supabaseDb = mod.db
-    console.log('[db] Using Supabase adapter')
+    if (mod.db) {
+      supabaseDb = mod.db
+      console.log('[db] Using Supabase adapter')
+    } else {
+      console.warn('[db] Supabase client is null (credentials missing). Falling back to Prisma.')
+    }
   } catch (error) {
     console.error('[db] Failed to load Supabase adapter:', error)
   }
