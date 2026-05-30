@@ -270,122 +270,32 @@ Stage Summary:
 - All 26 routes compiled successfully
 
 ---
-Task ID: supabase-adapter
-Agent: Supabase Adapter Agent
-Task: Create Supabase database adapter with Prisma-like interface for production PostgreSQL
-
-Work Log:
-- Analyzed all 24 API route files to catalog every Prisma operation pattern used
-- Cataloged 10 models: user, course, module, lesson, enrollment, assignment, submission, announcement, notification, auditLog
-- Identified all Prisma operations: findUnique, findFirst, findMany, create, createMany, update, updateMany, count, deleteMany, upsert, $transaction
-- Identified all where clause patterns: simple equality, contains, in, not, gte, lte, not-null, AND, OR, composite keys (userId_courseId, assignmentId_studentId), nested relation filters (single and double depth like `{ course: { instructorId } }` and `{ assignment: { course: { instructorId } } }`)
-- Identified include patterns: simple include, include with select, deep nested include (3+ levels), _count with select, include with orderBy/take
-- Identified update patterns: simple update, increment/decrement operators, updatedAt auto-set, null assignments
-- Created `/src/lib/supabase-client.ts` (~700 lines) — comprehensive Prisma-compatible adapter wrapping @supabase/supabase-js
-- Updated `/src/lib/db.ts` — conditional export: Supabase adapter when NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY are set, Prisma fallback otherwise
-- ESLint passes with 0 errors (2 pre-existing warnings)
-
-Stage Summary:
-- Supabase client: `createClient(url, serviceRoleKey)` with `db: { schema: 'public' }`
-- Where clause resolver: recursively translates Prisma where → flat Supabase filters; handles nested relation filters by pre-resolving IDs via sub-queries
-- Include processor: single-record and batch (findMany) modes; handles _count via grouped queries, many-to-one and one-to-many relations, nested includes, include with select, orderBy, take
-- Select processor: extracts scalar columns for Supabase `.select()`, relation keys treated as includes
-- Update transformer: handles `{ increment: N }` / `{ decrement: N }` by fetching current value first; auto-sets `updatedAt`
-- OrderBy handler: supports single and multi-field ordering
-- Composite key support: detects `userId_courseId` / `assignmentId_studentId` patterns
-- Transaction: sequential execution (Supabase REST doesn't support true transactions); supports both array and interactive forms
-- Date handling: ISO strings from Supabase converted to Date objects for Prisma compatibility
-- Zero code changes required in any API route — drop-in replacement via db.ts
-- Environment variables: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
-
----
-Task ID: supabase-seed
-Agent: Supabase Seed Agent
-Task: Seed data into Supabase PostgreSQL database using the SQL API
-
-Work Log:
-- Read Prisma schema (`prisma/schema.prisma`) and seed script (`prisma/seed.ts`) to understand data structure
-- Generated bcrypt hashes for 3 passwords using bcryptjs (cost 10): Admin123456, Prof123456, Stud123456
-- Created `/home/z/seed_supabase.js` — Node.js script that generates and executes INSERT SQL statements via Supabase SQL Management API
-- Pre-generated UUIDs for all 111 records across 10 tables to maintain referential integrity
-- Escaped all string values (single quotes in content, Spanish characters) for PostgreSQL compatibility
-- Executed data seeding in 12 sequential steps via POST to Supabase SQL API endpoint
-- All steps returned HTTP 201 success
-
-Data seeded:
-- 6 users (1 SUPER_ADMIN, 2 PROFESSOR, 3 STUDENT) with bcrypt password hashes
-- 4 courses (3 PUBLISHED, 1 DRAFT) with correct instructor foreign keys
-- 10 modules across 3 published courses (4+3+3)
-- 32 lessons across all modules (mix of TEXT, VIDEO, QUIZ types)
-- 5 assignments with due dates and module references
-- 6 enrollments (student1: 3 courses, student2: 2 courses, student3: 1 course)
-- 7 submissions (4 GRADED with scores/feedback, 3 SUBMITTED pending)
-- 8 announcements (4 pinned, distributed across 3 courses)
-- 15 notifications (students, professors, admin — mix of read/unread, INFO/SUCCESS/WARNING)
-- 18 audit log entries (USER_CREATE, COURSE_CREATE/PUBLISH, ENROLLMENT_CREATE, SUBMISSION_CREATE/GRADE, etc.)
-
-Verification:
-- Ran COUNT(*) queries on all 10 tables — all counts match expected values
-- Spot-checked users table: all 6 users with correct emails, names, and roles
-
-Stage Summary:
-- Total records seeded: 111 across 10 tables
-- All foreign key references are valid
-- All enum values match PostgreSQL enum types
-- Seed script is idempotent (TRUNCATE CASCADE before INSERT)
-- Test accounts: admin@elevate-lms.com/Admin123456, prof1@elevate-lms.com/Prof123456, prof2@elevate-lms.com/Prof123456, student1@elevate-lms.com/Stud123456, student2@elevate-lms.com/Stud123456, student3@elevate-lms.com/Stud123456
-
----
 Task ID: 13
-Agent: Rebranding & Deployment Agent
-Task: Rebrand from SW-IPP to Elévate, set up Supabase PostgreSQL, rename all platforms
+Agent: Branding & Theme Customization Agent
+Task: Sync GitHub version locally, update branding to "Elévate", adapt colors to logo, build theme customization system
 
 Work Log:
-- Processed uploaded logo (Gemini_Generated_Image_vqxsegvqxsegvqxs.png): removed background using sharp color-distance threshold, cropped to content + padding
-- Created favicon files: favicon-32x32.png, favicon-16x16.png, apple-touch-icon.png, icon.png, logo.png
-- Renamed all SW-IPP references to Elévate across 12 source files (layout, sidebar, app-layout, login, register, page, auth-store, api, auth, register-route, seed, schema)
-- Changed localStorage keys from sw-ipp-token/refresh to elevate-token/refresh
-- Updated seed email domains from sw-ipp.com to elevate-lms.com
-- Renamed Supabase project from "moodle-2" to "elevate" via Management API
-- Created all 10 database tables in Supabase PostgreSQL via SQL API (DDL)
-- Added updatedAt triggers for all 9 timestamped tables
-- Installed @supabase/supabase-js and created comprehensive Prisma-compatible adapter (supabase-client.ts)
-- Seeded 111 records across 10 tables via Supabase SQL API
-- Updated Vercel project: renamed to "elevate", added NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, DIRECT_URL env vars
-- Renamed GitHub repo from "sw-ipp-lms" to "elevate-lms"
-- Pushed all changes to GitHub
-- ESLint: 0 errors (2 pre-existing warnings)
+- Used GitHub API to compare local vs GitHub code — found local was behind (still "SW-IPP" branding)
+- Downloaded logo.png and all favicon assets (favicon-32x32.png, apple-touch-icon.png, icon.png, favicon-16x16.png) from GitHub
+- Analyzed logo.png with VLM skill — identified brand colors: navy blue (#003366), medium blue (#0099CC), teal (#00C2D1)
+- Updated globals.css with new oklch color palette based on logo colors (blue/teal theme replacing old green)
+- Added brand gradient utility classes (bg-brand-gradient, bg-brand-gradient-light, bg-brand-gradient-dark)
+- Updated layout.tsx — "Elévate" branding, favicon-32x32.png, apple-touch-icon.png, custom storageKey
+- Updated sidebar.tsx — logo.png via next/image, "Elévate" text, Palette icon in dropdown
+- Updated login-page.tsx — "Elévate" branding, logo.png, brand gradient background
+- Updated register-page.tsx — "Elévate" branding, logo.png, brand gradient background
+- Updated page.tsx — "Loading Elévate..." text
+- Updated app-layout.tsx — "Elévate" in breadcrumb and footer
+- Updated dashboard-page.tsx — chart colors to new blue palette (oklch(0.49 0.15 250))
+- Created /src/stores/theme-store.ts — Zustand theme store with 6 color presets, 5 background styles, localStorage persistence
+- Created /src/components/profile/appearance-settings.tsx — Theme mode (light/dark/system), color palette picker, background style picker
+- Updated profile-page.tsx — Added tabs (Account/Appearance) with AppearanceSettings component and reset button
 
 Stage Summary:
-- Supabase: https://nqstswgiqfhhyvukzmkw.supabase.co (project name: elevate)
-- GitHub: https://github.com/AQUASAURIO/elevate-lms
-- Vercel: project renamed to "elevate" (auto-redeploy on push)
-- All platforms renamed from SW-IPP/moodle-2 to Elévate/elevate
-- Database: 10 tables, 111 records, all seeded
-- Auth system uses Supabase service_role key in production, Prisma+SQLite locally
-
----
-Task ID: auth-fix
-Agent: Auth Fix Agent
-Task: Fix authentication bugs - Vercel "Something went wrong" and local "Session expired"
-
-Work Log:
-- Diagnosed root cause: `src/lib/auth.ts` used `Bun.password.hash()` and `Bun.password.verify()` which are Bun-only APIs. On Vercel (Node.js runtime), these throw `ReferenceError: Bun is not defined`, caught by the generic error handler returning "Something went wrong"
-- Diagnosed secondary issue: `src/lib/supabase-client.ts` had `'use server'` directive on line 1, causing Next.js to treat the module as a React Server Action, breaking the Prisma-compatible adapter
-- Installed `bcryptjs` + `@types/bcryptjs` as cross-runtime compatible bcrypt library (works on Bun, Node.js, and Vercel)
-- Replaced `Bun.password.hash(password, { algorithm: 'bcrypt', cost: 10 })` with `bcrypt.hash(password, BCRYPT_ROUNDS)` in auth.ts
-- Replaced `Bun.password.verify(password, hash)` with `bcrypt.compare(password, hash)` in auth.ts
-- Removed `'use server'` directive from supabase-client.ts (line 1)
-- Rewrote `src/lib/db.ts` to use conditional `require()` for Supabase adapter loading
-- Configured `.env` with Supabase credentials (NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET)
-- Verified Supabase project "elevate" (ref: nqstswgiqfhhyvukzmkw) has all 10 tables with correct schema
-- Verified existing users in Supabase have bcrypt `$2b$10$` hashes (compatible with bcryptjs)
-- Tested login API endpoint: admin@elevate-lms.com/Admin123456 returns `success: true` with access/refresh tokens
-- Verified Supabase adapter loads correctly: `[db] Using Supabase adapter` confirmed in server logs
-
-Stage Summary:
-- Root cause: `Bun.password` is Bun-only, not available on Vercel's Node.js runtime
-- Fix: `bcryptjs` as cross-runtime bcrypt replacement
-- Auth flows confirmed working: login returns proper JWT tokens with user data
-- Supabase adapter working: users table queried successfully
-- Pre-existing Turbopack stability issue in local dev (server crashes after first page request) — unrelated to auth changes
+- Full "Elévate" branding synced across all files
+- Color palette: navy blue primary (#003366 → oklch(0.49 0.15 250)), teal accent (#00C2D1)
+- 6 color presets: Brand, Ocean, Forest, Sunset, Royal, Custom
+- 5 background styles: Default, Dark, Warm Cream, Cool Gray, Custom color
+- Theme persistence via localStorage
+- Profile page now has Account + Appearance tabs
+- Dev server compiles and returns HTTP 200 successfully

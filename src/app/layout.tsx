@@ -39,6 +39,7 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
+          storageKey="elevate-theme"
         >
           {children}
           <Toaster position="top-right" richColors closeButton />

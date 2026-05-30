@@ -33,6 +33,7 @@ import {
   LogOut,
   Settings,
   ChevronDown,
+  Palette,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
@@ -74,9 +75,9 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2.5">
-          <Image src="/logo.png" alt="Elévate" width={32} height={32} className="rounded-lg" />
-          <span className="text-lg font-bold tracking-tight">Elévate</span>
+        <div className="flex items-center gap-2.5 overflow-hidden">
+          <Image src="/logo.png" alt="Elévate" width={32} height={32} className="rounded-lg shrink-0" />
+          <span className="text-lg font-bold tracking-tight whitespace-nowrap group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200">Elévate</span>
         </div>
       </SidebarHeader>
 
@@ -145,22 +146,23 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  tooltip={user ? `${user.firstName} ${user.lastName}` : 'User'}
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 shrink-0">
                     <AvatarImage src={user?.avatar || undefined} alt={user?.firstName} />
                     <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-medium text-sm">
+                  <div className="flex flex-col gap-0.5 leading-none overflow-hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200">
+                    <span className="font-medium text-sm whitespace-nowrap">
                       {user ? `${user.firstName} ${user.lastName}` : 'User'}
                     </span>
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-[11px] text-muted-foreground whitespace-nowrap">
                       {userRole.replace('_', ' ')}
                     </span>
                   </div>
-                  <ChevronDown className="ml-auto h-4 w-4" />
+                  <ChevronDown className="ml-auto h-4 w-4 shrink-0 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -173,9 +175,9 @@ export function AppSidebar() {
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('profile')}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                <DropdownMenuItem onClick={() => navigate('profile', { tab: 'appearance' })}>
+                  <Palette className="mr-2 h-4 w-4" />
+                  Appearance
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>

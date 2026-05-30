@@ -8,11 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
-import { Loader2, User, Mail, Shield, Calendar, Clock, Save } from 'lucide-react';
+import { Loader2, User, Mail, Shield, Calendar, Clock, Save, Palette, RotateCcw } from 'lucide-react';
 import { format } from 'date-fns';
+import { AppearanceSettings } from './appearance-settings';
+import { useThemeStore, COLOR_PRESETS } from '@/stores/theme-store';
 
 export function ProfilePage() {
   const user = useAuthStore((s) => s.user);
@@ -33,11 +35,17 @@ export function ProfilePage() {
     toast.success('Profile updated successfully!');
   };
 
+  const handleResetTheme = () => {
+    useThemeStore.getState().setColorPreset('brand');
+    useThemeStore.getState().setBackgroundStyle('default');
+    toast.success('Theme reset to defaults');
+  };
+
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your account settings</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Profile & Settings</h1>
+        <p className="text-muted-foreground mt-1">Manage your account and appearance settings</p>
       </div>
 
       {/* Profile Card */}
@@ -62,7 +70,7 @@ export function ProfilePage() {
                       : user?.role === 'ADMIN'
                       ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
                       : user?.role === 'PROFESSOR'
-                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                      ? 'bg-primary/10 text-primary dark:bg-primary/20'
                       : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                   }`}
                 >
@@ -80,97 +88,125 @@ export function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Account Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Account Information</CardTitle>
-          <CardDescription>Your account details and activity</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-muted-foreground flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5" />
-                First Name
-              </Label>
-              <Input value={user?.firstName || ''} disabled className="bg-muted/50" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5" />
-                Last Name
-              </Label>
-              <Input value={user?.lastName || ''} disabled className="bg-muted/50" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5" />
-                Email
-              </Label>
-              <Input value={user?.email || ''} disabled className="bg-muted/50" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground flex items-center gap-1.5">
-                <Shield className="h-3.5 w-3.5" />
-                Role
-              </Label>
-              <Input value={user?.role?.replace('_', ' ') || ''} disabled className="bg-muted/50" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" />
-                Joined
-              </Label>
-              <Input
-                value={user?.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'N/A'}
-                disabled
-                className="bg-muted/50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                Last Login
-              </Label>
-              <Input
-                value={user?.lastLoginAt ? format(new Date(user.lastLoginAt), 'MMM d, yyyy HH:mm') : 'N/A'}
-                disabled
-                className="bg-muted/50"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Settings Tabs */}
+      <Tabs defaultValue="account" className="space-y-4">
+        <TabsList className="w-full justify-start">
+          <TabsTrigger value="account" className="gap-1.5">
+            <User className="h-3.5 w-3.5" />
+            Account
+          </TabsTrigger>
+          <TabsTrigger value="appearance" className="gap-1.5">
+            <Palette className="h-3.5 w-3.5" />
+            Appearance
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Bio */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Bio</CardTitle>
-          <CardDescription>Share a little about yourself</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            placeholder="Tell us a bit about yourself..."
-            rows={4}
-            className="scrollbar-thin"
-          />
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
+        {/* Account Tab */}
+        <TabsContent value="account" className="space-y-6">
+          {/* Account Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Account Information</CardTitle>
+              <CardDescription>Your account details and activity</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" />
+                    First Name
+                  </Label>
+                  <Input value={user?.firstName || ''} disabled className="bg-muted/50" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" />
+                    Last Name
+                  </Label>
+                  <Input value={user?.lastName || ''} disabled className="bg-muted/50" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5" />
+                    Email
+                  </Label>
+                  <Input value={user?.email || ''} disabled className="bg-muted/50" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground flex items-center gap-1.5">
+                    <Shield className="h-3.5 w-3.5" />
+                    Role
+                  </Label>
+                  <Input value={user?.role?.replace('_', ' ') || ''} disabled className="bg-muted/50" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
+                    Joined
+                  </Label>
+                  <Input
+                    value={user?.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'N/A'}
+                    disabled
+                    className="bg-muted/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" />
+                    Last Login
+                  </Label>
+                  <Input
+                    value={user?.lastLoginAt ? format(new Date(user.lastLoginAt), 'MMM d, yyyy HH:mm') : 'N/A'}
+                    disabled
+                    className="bg-muted/50"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bio */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Bio</CardTitle>
+              <CardDescription>Share a little about yourself</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Tell us a bit about yourself..."
+                rows={4}
+                className="scrollbar-thin"
+              />
+              <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Appearance Tab */}
+        <TabsContent value="appearance">
+          <div className="flex justify-end mb-4">
+            <Button variant="outline" size="sm" onClick={handleResetTheme}>
+              <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+              Reset to Defaults
+            </Button>
+          </div>
+          <AppearanceSettings />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
